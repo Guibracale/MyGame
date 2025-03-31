@@ -1,8 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MyGame" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.MyGame" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Remove cor padrão dos botões do tema -->
+        <item name="colorButtonNormal">#4F4F4F</item>
+        <item name="colorPrimary">#4F4F4F</item>
+        <item name="colorPrimaryVariant">#4F4F4F</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
     </style>
 
     <style name="Theme.MyGame" parent="Base.Theme.MyGame" />

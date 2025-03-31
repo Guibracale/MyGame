@@ -100,15 +100,16 @@ class GameActivity : AppCompatActivity() {
     private fun showPlayerChallenge() {
         database.child("game").child(playerName).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.getValue(object : GenericTypeIndicator<Pair<String, String>>() {})?.let { (target, challenge) ->
-                    tvTargetPlayer.text = "Alvo: $target"
-                    tvChallenge.text = "Desafio: $challenge"
+                snapshot.getValue(PlayerChallenge::class.java)?.let { playerChallenge ->
+                    tvTargetPlayer.text = "Alvo: ${playerChallenge.target}"
+                    tvChallenge.text = "Desafio: ${playerChallenge.challenge}"
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
 
     private fun completeChallenge() {
         // Aqui você pode adicionar lógica para validar ou armazenar que o desafio foi concluído

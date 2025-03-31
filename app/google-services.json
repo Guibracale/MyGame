@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "996053677899",
+    "firebase_url": "https://my-game-24f8d-default-rtdb.firebaseio.com",
+    "project_id": "my-game-24f8d",
+    "storage_bucket": "my-game-24f8d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996053677899:android:2d6ee793b2247cee675ace",
+        "android_client_info": {
+          "package_name": "com.example.mygame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGukqPdfGgO-gLNdepFsh77DVOXBsqdIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

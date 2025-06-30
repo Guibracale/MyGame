@@ -8,13 +8,13 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 
 class PlayerListAdapter(context: Context, players: List<String>) :
-    ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, players) {
+    ArrayAdapter<String>(context, R.layout.item_player, players) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_player, parent, false)
         val playerName = getItem(position)
-        val textView = view.findViewById<TextView>(android.R.id.text1)
+        val textView = view.findViewById<TextView>(R.id.playerNameTextView)
         textView.text = playerName
         return view
     }

@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class GameActivity : AppCompatActivity() {
     private lateinit var roomId: String
@@ -46,6 +48,39 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    private fun completeChallenge() {
+        database.child("standings").runTransaction(object : Transaction.Handler {
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val standings = currentData.getValue(object : GenericTypeIndicator<HashMap<String, Int>>() {})
+                    ?: hashMapOf()
+
+                // Se o jogador já tem posição válida (>0), apenas redireciona
+                if (standings[playerName]?.let { it > 0 } == true) {
+                    return Transaction.success(currentData)
+                }
+
+                // Calcula a próxima posição baseada nos jogadores que já completaram
+                val nextPosition = standings.values.count { it > 0 } + 1
+                standings[playerName] = nextPosition
+                currentData.value = standings
+
+                return Transaction.success(currentData)
+            }
+
+            override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
+                if (error != null) {
+                    Toast.makeText(this@GameActivity, "Erro ao completar desafio", Toast.LENGTH_SHORT).show()
+                } else if (committed) {
+                    val intent = Intent(this@GameActivity, ChallengeCompletedActivity::class.java)
+                    intent.putExtra("ROOM_ID", roomId)
+                    intent.putExtra("PLAYER_NAME", playerName)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        })
+    }
+
     private fun listenForGameStart() {
         database.child("gameStarted").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -58,65 +93,56 @@ class GameActivity : AppCompatActivity() {
         })
     }
 
-    data class PlayerChallenge(
-        val target: String = "",
-        val challenge: String = ""
-    )
-
-
     private fun assignTargetAndChallenge() {
         database.child("players").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val players = snapshot.children.mapNotNull { it.getValue(String::class.java) }.toMutableList()
+                val playersList = ArrayList<String>()
+                for (playerSnapshot in snapshot.children) {
+                    playerSnapshot.getValue(String::class.java)?.let { playersList.add(it) }
+                }
 
-                if (players.size < 2) {
-                    Toast.makeText(this@GameActivity, "Mínimo de 2 jogadores para começar!", Toast.LENGTH_SHORT).show()
+                if (playersList.size < 2) {
+                    Toast.makeText(
+                        this@GameActivity,
+                        "Mínimo de 2 jogadores para começar!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return
                 }
 
-                players.shuffle()
+                Collections.shuffle(playersList)
+                val challengesMap = hashMapOf<String, Any>()
+                val standingsMap = hashMapOf<String, Int>()
 
-                val assignments = mutableMapOf<String, PlayerChallenge>()
-
-                for (i in players.indices) {
-                    val targetIndex = (i + 1) % players.size
-                    val target = players[targetIndex]
+                for (i in playersList.indices) {
+                    val player = playersList[i]
+                    val target = playersList[(i + 1) % playersList.size]
                     val challenge = challenges.random()
-                    assignments[players[i]] = PlayerChallenge(target, challenge)
+
+                    challengesMap[player] = hashMapOf(
+                        "target" to target,
+                        "challenge" to challenge
+                    )
+                    // Inicializa sem posição (não aparece no ranking até completar)
+                    standingsMap[player] = 0
                 }
 
-                database.child("game").setValue(assignments).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        showPlayerChallenge()
-                    }
-                }
-            }
+                val updates = hashMapOf<String, Any>(
+                    "challenges" to challengesMap,
+                    "standings" to standingsMap
+                )
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-
-    private fun showPlayerChallenge() {
-        database.child("game").child(playerName).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.getValue(PlayerChallenge::class.java)?.let { playerChallenge ->
-                    tvTargetPlayer.text = "Alvo: ${playerChallenge.target}"
-                    tvChallenge.text = "Desafio: ${playerChallenge.challenge}"
+                database.updateChildren(updates).addOnSuccessListener {
+                    val myChallenge = challengesMap[playerName] as? Map<*, *>
+                    tvTargetPlayer.text = "Alvo: ${myChallenge?.get("target")}"
+                    tvChallenge.text = "Desafio: ${myChallenge?.get("challenge")}"
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@GameActivity, "Erro ao carregar jogadores!", Toast.LENGTH_SHORT)
+                    .show()
+            }
         })
-    }
-
-
-    private fun completeChallenge() {
-        // Aqui você pode adicionar lógica para validar ou armazenar que o desafio foi concluído
-        Toast.makeText(this, "Desafio concluído!", Toast.LENGTH_SHORT).show()
-
-        // Redirecionar para outra tela (ainda não criada)
-        val intent = Intent(this, ChallengeCompletedActivity::class.java)
-        startActivity(intent)
     }
 }

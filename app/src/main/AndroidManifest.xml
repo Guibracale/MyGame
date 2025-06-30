@@ -38,6 +38,11 @@
             android:resizeableActivity="true"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity android:name=".ChallengeCompletedActivity"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:windowSoftInputMode="adjustResize" />
+
 
     </application>
 

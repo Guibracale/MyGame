@@ -2,36 +2,93 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@android:color/black">
 
-    <EditText
-        android:id="@+id/etRoomId"
-        android:layout_width="match_parent"
+    <!-- Título fixado no topo -->
+    <TextView
+        android:id="@+id/tvJoinRoomTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Digite o ID da Sala"
-        android:inputType="text"
-        tools:ignore="MissingConstraints" />
+        android:text="Entrar em sala"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
 
-    <EditText
-        android:id="@+id/etPlayerName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Digite seu Nome"
-        android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@id/etRoomId"
-        android:layout_marginTop="16dp"/>
-
+    <!-- Botão fixado no final da tela -->
     <Button
         android:id="@+id/btnConfirmJoin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:text="Entrar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etPlayerName" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Card centralizado verticalmente entre o título e o botão -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardInputs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#1C1C1C"
+        app:layout_constraintTop_toBottomOf="@id/tvJoinRoomTitle"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmJoin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID da sala:"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/etRoomId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Digite o ID da Sala"
+                android:inputType="text"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/darker_gray"
+                android:backgroundTint="@android:color/white"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seu nome:"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/etPlayerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Digite seu Nome"
+                android:inputType="textPersonName"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/darker_gray"
+                android:backgroundTint="@android:color/white"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

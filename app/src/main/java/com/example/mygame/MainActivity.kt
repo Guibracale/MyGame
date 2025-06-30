@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         val btnJoinRoom = findViewById<Button>(R.id.btnJoinRoom)
 
         btnCreateRoom.setOnClickListener {
-            showCreateRoomDialog() // Mostra a pop-up antes de criar a sala
+            showCreateRoomDialog()
         }
 
         btnJoinRoom.setOnClickListener {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCreateRoomDialog() {
-        val roomId = UUID.randomUUID().toString().substring(0, 6) // Gera o ID da sala
+        val roomId = UUID.randomUUID().toString().substring(0, 6)
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("ID da sala: $roomId")
@@ -58,15 +58,17 @@ class MainActivity : AppCompatActivity() {
     private fun createRoom(roomId: String, playerName: String) {
         val database = FirebaseDatabase.getInstance().getReference("salas")
 
-        val roomData = mapOf(
+        val roomData = hashMapOf(
             "roomId" to roomId,
-            "creator" to playerName,  // Definir quem criou a sala
-            "players" to mapOf(playerName to playerName) // Criador já entra na lista
+            "creator" to playerName,
+            "players" to hashMapOf(playerName to playerName),
+            "gameStarted" to false,
+            "standings" to hashMapOf<String, Int>(), // Rankings por jogador
+            "challenges" to hashMapOf<String, Any>()  // Desafios por jogador
         )
 
         database.child(roomId).setValue(roomData).addOnSuccessListener {
             Toast.makeText(this, "Sala criada com sucesso!", Toast.LENGTH_LONG).show()
-
             val intent = Intent(this, LobbyActivity::class.java)
             intent.putExtra("ROOM_ID", roomId)
             intent.putExtra("PLAYER_NAME", playerName)
